@@ -4,8 +4,17 @@ import { randomUUID } from 'node:crypto'
 import dayjs from 'dayjs'
 
 export class InMemoryChekinsRepository implements CheckInsRepository {
-
   public itens: Checkin[] = []
+
+  async findById(id: string) {
+    const checkIn = this.itens.find((item) => item.id === id)
+
+    if (!checkIn) {
+      return null
+    }
+
+    return checkIn
+  }
 
   async findByUserIdDate(userId: string, date: Date) {
 
@@ -26,15 +35,15 @@ export class InMemoryChekinsRepository implements CheckInsRepository {
     return checkInOnSameDate
   }
 
-  async findManyByUserId(userId: string, page: number){
+  async findManyByUserId(userId: string, page: number) {
     return this.itens
-    .filter((item) => item.user_id === userId)
-    .slice((page -1) * 20, page * 20)
+      .filter((item) => item.user_id === userId)
+      .slice((page - 1) * 20, page * 20)
   }
 
-  async countByUserID(userId: string){
+  async countByUserID(userId: string) {
     return this.itens
-    .filter((item) => item.user_id === userId).length
+      .filter((item) => item.user_id === userId).length
   }
 
   async create(data: Prisma.CheckinUncheckedCreateInput) {
@@ -47,6 +56,16 @@ export class InMemoryChekinsRepository implements CheckInsRepository {
     }
 
     this.itens.push(checkIn)
+
+    return checkIn
+  }
+
+  async save(checkIn: Checkin) {
+    const checkInIndex = this.itens.findIndex(item => item.id === checkIn.id)
+
+    if (checkInIndex >= 0) {
+      this.itens[checkInIndex] = checkIn
+    }
 
     return checkIn
   }
