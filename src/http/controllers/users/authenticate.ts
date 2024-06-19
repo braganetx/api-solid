@@ -25,9 +25,24 @@ export async function authenticate(request: FastifyRequest, replay: FastifyReply
       }
     })
 
-    return replay.status(200).send({
-      token,
+    const refreshToken = await replay.jwtSign({}, {
+      sign: {
+        sub: user.id,
+        expiresIn: '7d',
+      }
     })
+
+    return replay
+      .setCookie('refreshToken', refreshToken, {
+        path: '/',
+        secure: true,
+        sameSite: true,
+        httpOnly: true,
+      })
+      .status(200)
+      .send({
+        token,
+      })
 
 
   } catch (err) {

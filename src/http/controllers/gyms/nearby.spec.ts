@@ -3,7 +3,7 @@ import { app } from "@/app";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createAndAuthenticateUser } from "@/ultils/create-end-authenticate-user";
 
-describe('search Gym (e2e)', () => {
+describe('Nearby Gyms (e2e)', () => {
     beforeAll(async () => {
         await app.ready()
     })
@@ -11,7 +11,7 @@ describe('search Gym (e2e)', () => {
         await app.close()
     })
 
-    it('should be able to search gym by title', async () => {
+    it('should be able to list nearby gyms', async () => {
 
         const { token } = await createAndAuthenticateUser(app)
 
@@ -22,8 +22,8 @@ describe('search Gym (e2e)', () => {
                 title: 'JavaScript Gym',
                 description: 'Some description.',
                 phone: '62999999999',
-                latitude: -16.68030230,
-                longitude: -49.24578670
+                latitude: -16.6609585,
+                longitude: -49.1670848,
             })
 
         await request(app.server)
@@ -33,14 +33,16 @@ describe('search Gym (e2e)', () => {
                 title: 'TypeScript Gym',
                 description: 'Some description.',
                 phone: '62999999999',
-                latitude: -16.68030230,
-                longitude: -49.24578670
+                latitude: -16.3807743,
+                longitude: -48.9408149,
             })
 
+
         const response = await request(app.server)
-            .get('/gyms/search')
+            .get('/gyms/nearby')
             .query({
-                q: 'JavaScript',
+                latitude: -16.6609585,
+                longitude: -49.1670848,
             })
             .set('Authorization', `Bearer ${token}`)
             .send()
