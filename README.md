@@ -1,5 +1,5 @@
 # App
-GymPass style app.
+GymPass app.
 
 ## RFs (Requisitos funcionais)
 - [X] Deve ser possível se cadastrar;
